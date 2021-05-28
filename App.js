@@ -1,11 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Amplify , {Auth, API} from 'aws-amplify';
+import { withAuthenticator } from 'aws-amplify-react-native';
+import config from './src/aws-exports';
+import {onCreateMessageByReceiverID} from './src/graphql/subscriptions'
 
-export default function App() {
+
+Amplify.configure({
+  ...config,
+  Analytics: {
+    disabled: true,
+  },
+});
+
+function App() {
+
+  const [message, updateMessage] = useState("No message yet...");
+
+  useEffect(()=> {
+    subscribe()
+  }
+  ,[] )
+
+  function subscribe(){
+     API.graphql({
+      query: onCreateMessageByReceiverID,
+      variables: {
+        receiverID: "ed5cba0b-475a-4424-9a54-9e7018b357fa"
+      },
+    }).subscribe({
+      error: err => console.log("error caught", err),
+      next: messageData =>{
+        alert("Received new message from " +messageData.value.data.onCreateMessageByReceiverID.sender.name )
+        updateMessage(messageData.value.data.onCreateMessageByReceiverID.text)
+        console.log("messageData: ", messageData)
+      }
+    })
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+     <Text> {message} </Text>
       <StatusBar style="auto" />
     </View>
   );
@@ -19,3 +55,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default withAuthenticator(App);
