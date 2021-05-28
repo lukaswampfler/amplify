@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View , Button} from 'react-native';
 import Amplify , {Auth, API} from 'aws-amplify';
 import { withAuthenticator } from 'aws-amplify-react-native';
 import config from './src/aws-exports';
@@ -23,6 +23,14 @@ function App() {
   }
   ,[] )
 
+async function signOut(){
+  try{
+    await Auth.signOut();
+  } catch (error){
+    console.log("error signing out ", error);
+  }
+}
+
   function subscribe(){
      API.graphql({
       query: onCreateMessageByReceiverID,
@@ -42,6 +50,7 @@ function App() {
   return (
     <View style={styles.container}>
      <Text> {message} </Text>
+     <Button title = "Sign out" onPress ={signOut}/>
       <StatusBar style="auto" />
     </View>
   );
