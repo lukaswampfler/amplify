@@ -7,6 +7,13 @@ import config from './src/aws-exports';
 import {onCreateMessageByReceiverID} from './src/graphql/subscriptions'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+//import AWSAppSyncClient from 'aws-appsync'
+import {ApolloProvider} from 'react-apollo'
+//import { Rehydrated } from 'aws-appsync-react'
+import AppContext from './src/components/AppContext'; 
+import {ApolloClient} from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+
 
 import SignIn from './src/screens/SignIn';
 import SignUp from './src/screens/SignUp';
@@ -20,6 +27,19 @@ Amplify.configure({
     disabled: true,
   },
 });
+
+
+
+
+/*const client = new AWSAppSyncClient({
+  url: config.graphqlEndpoint,
+  region: config.region,
+  auth: {
+    type: config.authenticationType,
+    apiKey: config.apiKey,
+    jwtToken: async () => {Auth.currentSession().then(session => session.getIdToken().getJwtToken())}, // Required when you use Cognito UserPools OR OpenID Connect.
+  }
+})*/
 
 
 const AuthenticationStack = createStackNavigator();
@@ -61,14 +81,21 @@ const Initializing = () => {
 };
 
 
+
+
 function App() {
 
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
 
   const [message, updateMessage] = useState("No message yet...");
 
+  const [userName, setUserName] = useState('');
+  
+  const [dummyUser, setDummyUser] = useState('Dummy');
 
   useEffect(() => {
+    let token =  Auth.currentSession().then(session => session.getIdToken().getJwtToken())
+    console.log(token);
     checkAuthState();
   }, []);
 
@@ -83,11 +110,21 @@ function App() {
     }
   }
 
+  const userSettings = {
+    userName,
+    dummyUser,
+    setUserName, 
+    setDummyUser
+  }
+
   function updateAuthState(isUserLoggedIn) {
     setUserLoggedIn(isUserLoggedIn);
   }
 
+
+  //<ApolloProvider client={client}></ApolloProvider>
   return (
+    <AppContext.Provider value = {userSettings}>
     <NavigationContainer>
       {isUserLoggedIn === 'initializing' && <Initializing />}
       {isUserLoggedIn === 'loggedIn' && (
@@ -97,6 +134,7 @@ function App() {
         <AuthenticationNavigator updateAuthState={updateAuthState} />
       )}
     </NavigationContainer>
+    </AppContext.Provider>
   );
 
   /*useEffect(()=> {
@@ -137,4 +175,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withAuthenticator(App);
+export default App;

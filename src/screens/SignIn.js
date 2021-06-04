@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState , useContext} from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Auth } from 'aws-amplify';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppTextInput from '../components/AppTextInput';
 import AppButton from '../components/AppButton';
+import AppContext from '../components/AppContext';
 
 export default function SignIn({ navigation, updateAuthState }) {
+  
+  const myContext = useContext(AppContext)
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
@@ -14,6 +18,7 @@ export default function SignIn({ navigation, updateAuthState }) {
       await Auth.signIn(username, password);
       console.log('Successfully signed in');
       updateAuthState('loggedIn');
+      myContext.setUserName(username)
     } catch (error) {
       console.log('Error signing in...', error);
     }
@@ -24,7 +29,9 @@ export default function SignIn({ navigation, updateAuthState }) {
         <Text style={styles.title}>Sign in to your account</Text>
         <AppTextInput
           value={username}
-          onChangeText={text => setUsername(text)}
+          onChangeText={text => {
+            setUsername(text)}
+          }
           leftIcon="account"
           placeholder="Enter username"
           autoCapitalize="none"
@@ -45,7 +52,7 @@ export default function SignIn({ navigation, updateAuthState }) {
         <View style={styles.footerButtonContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.forgotPasswordButtonText}>
-              Don't have an account? Sign Up
+              Don't have an account, {username}? Sign Up
             </Text>
           </TouchableOpacity>
         </View>
