@@ -2,7 +2,6 @@ import { StatusBar } from 'expo-status-bar';
 import React, {useEffect, useState} from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Amplify , {Auth, API} from 'aws-amplify';
-import { withAuthenticator } from 'aws-amplify-react-native';
 import config from './src/aws-exports';
 import {onCreateMessageByReceiverID} from './src/graphql/subscriptions'
 import { NavigationContainer } from '@react-navigation/native';
