@@ -9,16 +9,16 @@ import AppContext from '../components/AppContext';
 export default function SignIn({ navigation, updateAuthState }) {
   
   const myContext = useContext(AppContext)
-  
-  const [username, setUsername] = useState('');
+
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   
   async function signIn() {
     try {
-      await Auth.signIn(username, password);
+      await Auth.signIn(myContext.userName, myContext.password);
       console.log('Successfully signed in');
       updateAuthState('loggedIn');
-      myContext.setUserName(username)
+      myContext.setUserName(userName)
     } catch (error) {
       console.log('Error signing in...', error);
     }
@@ -28,9 +28,9 @@ export default function SignIn({ navigation, updateAuthState }) {
       <View style={styles.container}>
         <Text style={styles.title}>Sign in to your account</Text>
         <AppTextInput
-          value={username}
+          value={myContext.username}
           onChangeText={text => {
-            setUsername(text)}
+            myContext.setUserName(text)}
           }
           leftIcon="account"
           placeholder="Enter username"
@@ -39,8 +39,8 @@ export default function SignIn({ navigation, updateAuthState }) {
           textContentType="emailAddress"
         />
         <AppTextInput
-          value={password}
-          onChangeText={text => setPassword(text)}
+          value={myContext.password}
+          onChangeText={text => myContext.setPassword(text)}
           leftIcon="lock"
           placeholder="Enter password"
           autoCapitalize="none"
@@ -52,7 +52,7 @@ export default function SignIn({ navigation, updateAuthState }) {
         <View style={styles.footerButtonContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
             <Text style={styles.forgotPasswordButtonText}>
-              Don't have an account, {username}? Sign Up
+              Don't have an account, {myContext.username}? Sign Up
             </Text>
           </TouchableOpacity>
         </View>

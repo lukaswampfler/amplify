@@ -84,19 +84,9 @@ const Initializing = () => {
 
 function App() {
 
-  const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
-
-  
-
+  const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');  
   const [userName, setUserName] = useState('');
-  
-  const [dummyUser, setDummyUser] = useState('Dummy');
-
-
-
-  
-
-
+  const [password, setPassword] = useState('');
 
   useEffect(() => {
     let token =  Auth.currentSession().then(session => session.getIdToken().getJwtToken())
@@ -118,14 +108,15 @@ function App() {
 
   const userSettings = {
     userName,
-    dummyUser,
+    password, 
+    isUserLoggedIn,
     setUserName, 
-    setDummyUser
+    setPassword,
+    setUserLoggedIn
   }
 
   function updateAuthState(isUserLoggedIn) {
     setUserLoggedIn(isUserLoggedIn);
-
   }
 
 
@@ -144,15 +135,7 @@ function App() {
     </AppContext.Provider>
   );
 
-  /*
-
-  return (
-    <View style={styles.container}>
-     <Text> {message} </Text>
-     <Button title = "Sign out" onPress ={signOut}/>
-      <StatusBar style="auto" />
-    </View>
-  );*/
+ 
 }
 
 const styles = StyleSheet.create({

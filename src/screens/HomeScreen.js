@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react'
-import { View, Text, FlatList, Pressable , SafeAreaView, TouchableOpacity} from 'react-native'
+import React, {useState, useEffect, useContext} from 'react'
+import { View, Text, FlatList, Pressable , SafeAreaView, TouchableOpacity, Button} from 'react-native'
 import Loading from './Loading'
 import { listMessages} from '../graphql/queries';
-import  { API, graphqlOperation}from 'aws-amplify'
+import  { API, Auth, graphqlOperation}from 'aws-amplify'
 
 import styles from './styles'
 
 import {onCreateMessageByReceiverID} from '../graphql/subscriptions'
 
+import AppContext from '../components/AppContext';
 
 
 
@@ -20,10 +21,28 @@ const MessageItem = ({ message }) => (
   </View>
 );
 
-export default function HomeScreen ()  {
 
+
+
+
+export default function HomeScreen ({navigation})  {
+
+
+  
+
+  const myContext = useContext(AppContext);
 
   const [latestMessage, updateLatestMessage] = useState("No message yet...");
+
+  async function signOut() {
+    try {
+        await Auth.signOut();
+        myContext.setUserLoggedIn('loggedOut');
+        console.log("sign out succesful")
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
+  }
 
   function subscribe(){
     API.graphql({
@@ -58,17 +77,25 @@ useEffect(() => {
   subscribe();
 }, [])
 
+useEffect(() => 
+{
+  alert("Signed in as "+ myContext.userName);
+  console.log("username: ", myContext.userName);
+}, [])
+
  useEffect(() => {
     getMessages();
   }
   , [latestMessage])
 
-console.log("messages: ", messages);
+//console.log("messages: ", messages);
 
 
  
  return (
   <SafeAreaView style={styles.container}>
+ <Button onPress = {signOut} title="Sign Out"/>
+
   {messages        ?  
       <FlatList
         data = {messages.data.listMessages.items}
