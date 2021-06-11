@@ -115,6 +115,7 @@ function App() {
     }
   }
 
+
   const userSettings = {
     userName,
     dummyUser,
@@ -124,6 +125,7 @@ function App() {
 
   function updateAuthState(isUserLoggedIn) {
     setUserLoggedIn(isUserLoggedIn);
+
   }
 
 
@@ -147,6 +149,7 @@ function App() {
   return (
     <View style={styles.container}>
      <Text> {message} </Text>
+     <Button title = "Sign out" onPress ={signOut}/>
       <StatusBar style="auto" />
     </View>
   );*/
