@@ -32,7 +32,7 @@ export default function HomeScreen ()  {
 const [messages, setMessages] = useState(null);
 
 const getMessages = async () => {
-  const messages = await API.graphql({query:listMessages, variables: {limit: 10}});
+  const messages = await API.graphql({query:listMessages, variables: {limit: 100}});
   setMessages(messages);
 }
 
