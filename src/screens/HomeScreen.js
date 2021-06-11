@@ -6,6 +6,7 @@ import  { API, graphqlOperation}from 'aws-amplify'
 
 import styles from './styles'
 
+import {onCreateMessageByReceiverID} from '../graphql/subscriptions'
 
 
 
@@ -22,6 +23,23 @@ const MessageItem = ({ message }) => (
 export default function HomeScreen ()  {
 
 
+  const [latestMessage, updateLatestMessage] = useState("No message yet...");
+
+  function subscribe(){
+    API.graphql({
+     query: onCreateMessageByReceiverID,
+     variables: {
+       receiverID: "ed5cba0b-475a-4424-9a54-9e7018b357fa"
+     },
+   }).subscribe({
+     error: err => console.log("error caught", err),
+     next: messageData =>{
+       alert("Received new message from " +messageData.value.data.onCreateMessageByReceiverID.sender.name )
+       updateLatestMessage(messageData.value.data.onCreateMessageByReceiverID.text)
+       console.log("messageData: ", messageData)
+     }
+   })
+ }
   
 
   const renderItem = ({ item }) => (
@@ -36,10 +54,14 @@ const getMessages = async () => {
   setMessages(messages);
 }
 
+useEffect(() => {
+  subscribe();
+}, [])
+
  useEffect(() => {
     getMessages();
   }
-  , [])
+  , [latestMessage])
 
 console.log("messages: ", messages);
 

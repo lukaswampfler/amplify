@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import Amplify , {Auth, API} from 'aws-amplify';
 import config from './src/aws-exports';
-import {onCreateMessageByReceiverID} from './src/graphql/subscriptions'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 //import AWSAppSyncClient from 'aws-appsync'
@@ -87,11 +86,17 @@ function App() {
 
   const [isUserLoggedIn, setUserLoggedIn] = useState('initializing');
 
-  const [message, updateMessage] = useState("No message yet...");
+  
 
   const [userName, setUserName] = useState('');
   
   const [dummyUser, setDummyUser] = useState('Dummy');
+
+
+
+  
+
+
 
   useEffect(() => {
     let token =  Auth.currentSession().then(session => session.getIdToken().getJwtToken())
@@ -137,26 +142,7 @@ function App() {
     </AppContext.Provider>
   );
 
-  /*useEffect(()=> {
-    subscribe()
-  }
-  ,[] )
-
-  function subscribe(){
-     API.graphql({
-      query: onCreateMessageByReceiverID,
-      variables: {
-        receiverID: "ed5cba0b-475a-4424-9a54-9e7018b357fa"
-      },
-    }).subscribe({
-      error: err => console.log("error caught", err),
-      next: messageData =>{
-        alert("Received new message from " +messageData.value.data.onCreateMessageByReceiverID.sender.name )
-        updateMessage(messageData.value.data.onCreateMessageByReceiverID.text)
-        console.log("messageData: ", messageData)
-      }
-    })
-  }
+  /*
 
   return (
     <View style={styles.container}>
